@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "sqltablemodelro.h"
+#include <QSqlTableModel>
+#include <QDataWidgetMapper>
 
 namespace Ui {
 class MainWindow;
@@ -18,7 +19,15 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    SqlTableModelRO *model;
+    QSqlTableModel *filesModel;
+    QSqlTableModel *dl_logModel;
+    QDataWidgetMapper *mapper;
+
+private slots:
+    void addFile();
+    void changePath();
+    void selectAnother(QModelIndex);
+
 };
 
 #endif // MAINWINDOW_H

@@ -16,15 +16,12 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     server.cpp \
     mydb.cpp \
-    sqltablemodelro.cpp \
     logviewer.cpp
 
 
 HEADERS  += mainwindow.h \
     server.h \
     mydb.h \
-    sqltablemodelro.h \
     logviewer.h
 
-FORMS    += mainwindow.ui \
-    logviewer.ui
+FORMS    += mainwindow.ui

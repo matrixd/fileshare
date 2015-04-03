@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QSqlError>
+#include <QDateTime>
 
 MyDB::MyDB()
 {
@@ -35,16 +36,23 @@ bool MyDB::init()
     return 1;
 }
 
+QString MyDB::now()
+{
+    QDateTime time = QDateTime::currentDateTime();
+
+    return time.toString("yyyy-MM-dd HH:MM");
+}
+
 void MyDB::create()
 {
     QSqlQuery query;
     //files table
     query.exec("create table files (id integer primary key autoincrement not null, "
-               "hash text unique not null, "
                "path text not null,"
                "fname text not null, "
                "public integer not null default(0), "
-               "enabled integer not null default(1))");
+               "enabled integer not null default(1), "
+               "time text not null)");
     qDebug() << query.lastError().text();
 
     //download log table

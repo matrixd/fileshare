@@ -113,5 +113,6 @@ void MainWindow::changePath()
 
 void MainWindow::selectAnother(QModelIndex index)
 {
-
+    dl_logModel->setFilter(QString("file = %1").arg(index.row()));
+    dl_logModel->select();
 }

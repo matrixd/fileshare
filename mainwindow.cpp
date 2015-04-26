@@ -134,9 +134,7 @@ void MainWindow::selectAnother(QModelIndex index)
     //QByteArray ar(&c,1);
 
     //link.append(ar.toBase64(QByteArray::Base64UrlEncoding));
-
-    //BUG!
-    link.append(QString("%1").arg(index.row()));
+    link.append(QString("%1").arg(filesModel->record(index.row()).value(0).toInt()));
 
     this->ui->linkEdit->setText(link);
 

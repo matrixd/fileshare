@@ -42,11 +42,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dl_logModel = new QSqlTableModel(this);
     dl_logModel->setTable("dl_log");
-    dl_logModel->setEditStrategy(QSqlTableModel::OnRowChange);
+    //dl_logModel->setEditStrategy(QSqlTableModel::rea);
 
     view = ui->dl_logView;
     view->setModel(dl_logModel);
     view->hideColumn(0); // don't show the ID
+    view->hideColumn(1); // don't show the fileid
     view->resizeColumnsToContents();
     view->show();
 
@@ -117,8 +118,10 @@ void MainWindow::changePath()
 
 void MainWindow::selectAnother(QModelIndex index)
 {
-    dl_logModel->setFilter(QString("file = %1").arg(index.row()));
+    dl_logModel->setFilter(QString("file = %1").arg(filesModel->record(index.row()).value(0).toInt()));
     dl_logModel->select();
+    ui->dl_logView->resizeColumnsToContents();
+    //ui->dl_logView->show();
 
     QString link;
 
@@ -129,14 +132,7 @@ void MainWindow::selectAnother(QModelIndex index)
     link.append("3567");
     link.append('/');
 
-
-    //const char c = index.row();
-    //QByteArray ar(&c,1);
-
-    //link.append(ar.toBase64(QByteArray::Base64UrlEncoding));
     link.append(QString("%1").arg(filesModel->record(index.row()).value(0).toInt()));
 
     this->ui->linkEdit->setText(link);
-
-    qDebug() << link;
 }

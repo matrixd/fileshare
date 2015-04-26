@@ -144,16 +144,25 @@ void Server::readyRead()
         }
 
         //parsing user-agent
-        if(data.split(" ")[0].compare("User-Agent:", Qt::CaseInsensitive) == 02) {
+        if(data.split(" ")[0].compare("User-Agent:", Qt::CaseInsensitive) == 0) {
             qDebug() << "client: " << data.mid(12);
             connections->value(socket)->client = data;
         }
 
         //eof
-        if(data.at(0).isSpace())
+        if(data.at(0).isSpace()){
             qDebug() << "end";
-        //socket->write("sadasd");
-        //emit cmd(data);
+
+            QDateTime d = QDateTime::currentDateTime();
+            QString time = d.toString("yyyy-MM-dd HH:MM:ss");
+
+            QSqlQuery logq;
+            logq.exec(QString("insert into dl_log (file,ip,client,time) \
+                              values(%1,\"%2\",\"%3\",\"%4\")").arg(
+                                  QString("%1").arg(connections->value(socket)->fileid),
+                                  connections->value(socket)->ip,
+                                  connections->value(socket)->client, time));
+        }
     }
 
 }
@@ -162,8 +171,10 @@ void Server::disconnected()
 {
     QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
     qDebug() << socket;
+
     if(connections->value(socket)->file.isOpen())
         connections->value(socket)->file.close();
+
     delete connections->value(socket);
     connections->remove(socket);
     socket->deleteLater();

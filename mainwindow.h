@@ -27,6 +27,7 @@ private slots:
     void addFile();
     void changePath();
     void selectAnother(QModelIndex);
+    //void generateLink();
 
 };
 

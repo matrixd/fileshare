@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "srvthread.h"
 #include "server.h"
 #include <QTableView>
 #include <QDebug>
@@ -49,13 +50,16 @@ MainWindow::MainWindow(QWidget *parent) :
     view->resizeColumnsToContents();
     view->show();
 
+    //SrvThread* thrd = new SrvThread(this);
+    //thrd->start();
 
-    Server* srv = new Server();
+    Server *srv = new Server(this);
     srv->start();
+
 
     connect(this->ui->addButton, SIGNAL(pressed()), this, SLOT(addFile()));
     connect(this->ui->filesView, SIGNAL(clicked(QModelIndex)), mapper, SLOT(setCurrentModelIndex(QModelIndex)));
-    connect(this->ui->filesView, SIGNAL(clicked(QModelIndex)), this, SLOT());
+    connect(this->ui->filesView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectAnother(QModelIndex)));
     connect(this->ui->pathButton, SIGNAL(pressed()), this, SLOT(changePath()));
 
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this, SLOT(close()));
@@ -115,4 +119,26 @@ void MainWindow::selectAnother(QModelIndex index)
 {
     dl_logModel->setFilter(QString("file = %1").arg(index.row()));
     dl_logModel->select();
+
+    QString link;
+
+    //while debugging
+    link = "http://localhost";
+
+    link.append(':');
+    link.append("3567");
+    link.append('/');
+
+
+    //const char c = index.row();
+    //QByteArray ar(&c,1);
+
+    //link.append(ar.toBase64(QByteArray::Base64UrlEncoding));
+
+    //BUG!
+    link.append(QString("%1").arg(index.row()));
+
+    this->ui->linkEdit->setText(link);
+
+    qDebug() << link;
 }

@@ -2,7 +2,9 @@
 #define SERVER_H
 
 #include <QTcpServer>
-#include <QMap>;
+#include <QMap>
+#include <QThread>
+#include <QFile>
 
 class Server : public QTcpServer
 {
@@ -21,17 +23,18 @@ protected slots:
     void disconnected();
     void readyRead();
     void newConnection();
-    void aboutToClose();
+    void write(qint64 q);
 
     private:
     class ConnInfo
     {
     public:
         QString client;
-        unsigned int file;
+        QFile file;
         QString ip;
+        unsigned int fileid;
     };
-    QMap<qintptr, ConnInfo*> *connections;
+    QMap<QTcpSocket*, ConnInfo*> *connections;
 };
 
 #endif // SERVER_H

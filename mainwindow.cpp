@@ -10,6 +10,11 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QShortcut>
+#include <QSplitter>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QUrl>
+#include <QNetworkReply>
 
 #include "mydb.h"
 
@@ -18,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //QSplitter spl = new QSplitter(this);
+    //spl.addWidget();
 
     filesModel = new QSqlTableModel(this);
     //model->setTable("settings");
@@ -58,10 +66,19 @@ MainWindow::MainWindow(QWidget *parent) :
     srv->start();
 
 
+    QSqlQuery query;
+    query.exec("select value from settings where key = \"ip\"");
+    if(query.next())
+        ip = query.value(0).toString();
+    else
+        ip = "please update your ip";
+
+
     connect(this->ui->addButton, SIGNAL(pressed()), this, SLOT(addFile()));
     connect(this->ui->filesView, SIGNAL(clicked(QModelIndex)), mapper, SLOT(setCurrentModelIndex(QModelIndex)));
     connect(this->ui->filesView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectAnother(QModelIndex)));
     connect(this->ui->pathButton, SIGNAL(pressed()), this, SLOT(changePath()));
+    connect(this->ui->actionRefresh_ip, SIGNAL(triggered()), this, SLOT(getIp()));
 
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this, SLOT(close()));
 }
@@ -126,7 +143,7 @@ void MainWindow::selectAnother(QModelIndex index)
     QString link;
 
     //while debugging
-    link = "http://localhost";
+    link = "http://"+ip;
 
     link.append(':');
     link.append("3567");
@@ -135,4 +152,27 @@ void MainWindow::selectAnother(QModelIndex index)
     link.append(QString("%1").arg(filesModel->record(index.row()).value(0).toInt()));
 
     this->ui->linkEdit->setText(link);
+}
+
+void MainWindow::getIp()
+{
+    QNetworkAccessManager* m = new QNetworkAccessManager(this);
+    //QNetworkReply* reply = m->get(QNetworkRequest(QUrl("http://localhost:3790/")));
+    m->get(QNetworkRequest(QUrl("http://ifconfig.me/ip")));
+
+    //connect(reply, SIGNAL(readyRead()), this, SLOT(updIp()));
+    connect(m, SIGNAL(finished(QNetworkReply*)), this, SLOT(updIp(QNetworkReply*)));
+}
+
+void MainWindow::updIp(QNetworkReply* reply)
+{
+    //QNetworkReply *reply = static_cast<QNetworkReply*>(sender());
+    QByteArray data = reply->readLine();
+    if(QChar(data.at(0)).isSpace())
+        return;
+    QString ip = QString(data).remove("\r\n");
+    qDebug() << ip;
+    this->ip = ip;
+    MyDB::updSettings(QString("ip"),ip);
+    reply->deleteLater();
 }

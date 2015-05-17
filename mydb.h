@@ -9,6 +9,8 @@ public:
     MyDB();
     static bool init();
     static QString now();
+    static QByteArray getSettings(QString option);
+    static void updSettings(QString option, QString value);
 
 private:
      static void create();

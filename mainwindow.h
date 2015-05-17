@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSqlTableModel>
 #include <QDataWidgetMapper>
+#include <QNetworkReply>
 
 namespace Ui {
 class MainWindow;
@@ -22,11 +23,14 @@ private:
     QSqlTableModel *filesModel;
     QSqlTableModel *dl_logModel;
     QDataWidgetMapper *mapper;
+    QString ip;
 
 private slots:
     void addFile();
     void changePath();
     void selectAnother(QModelIndex);
+    void getIp();
+    void updIp(QNetworkReply*);
     //void generateLink();
 
 };

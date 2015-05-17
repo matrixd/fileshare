@@ -43,6 +43,21 @@ QString MyDB::now()
     return time.toString("yyyy-MM-dd HH:MM");
 }
 
+QByteArray MyDB::getSettings(QString option)
+{
+    QSqlQuery query;
+    query.exec(QString("select value from settings where key=\"%1\"").arg(option));
+    if(!query.next())
+        return QByteArray();
+    return query.value(0).toByteArray();
+}
+
+void MyDB::updSettings(QString option, QString value)
+{
+    QSqlQuery query;
+    query.exec(QString("update settings set value = \"%1\" where id = \"%2\"").arg(option,value));
+}
+
 void MyDB::create()
 {
     QSqlQuery query;

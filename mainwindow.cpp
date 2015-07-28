@@ -167,7 +167,7 @@ void MainWindow::getIp()
 void MainWindow::updIp(QNetworkReply* reply)
 {
     //QNetworkReply *reply = static_cast<QNetworkReply*>(sender());
-    QByteArray data = reply->readLine();
+    QByteArray data = reply->readLine().remove(-1,1);
     if(QChar(data.at(0)).isSpace())
         return;
     QString ip = QString(data).remove("\r\n");

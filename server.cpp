@@ -63,7 +63,6 @@ void Server::write(qint64 q)
     QByteArray fb = connections->value(socket)->file.read(1024);
     if(fb.size()){
         socket->write(fb);
-        fb = connections->value(socket)->file.read(1024);
     } else {
         connections->value(socket)->file.close();
         socket->write("\r\n");
